@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ext-config>
+    <lang-entry lang="C++" ext=".cpp" />
+    <lang-entry lang="C++" ext=".inl" />
+    <lang-entry lang="C++" ext=".hpp" />
+    <lang-entry lang="C" ext=".c" />
+    <lang-entry lang="C" ext=".h" />
+    <lang-entry lang="python" ext=".py" />
+    <lang-entry lang="rust" ext=".rs" />
+    <lang-entry lang="C#" ext=".cs" />
+</ext-config>
