@@ -13,7 +13,7 @@
     <lang-entry lang="assembly" ext=".S" />
 
     <lang-entry lang="sourcepawn" ext=".sp" />
-    <lang-entry lang="generic-include" ext=".inc" />
+    <lang-entry lang="generic include" ext=".inc" />
 
     <lang-entry lang="python" ext=".py" />
 
@@ -34,5 +34,11 @@
     <lang-entry lang="text file" ext=".txt" />
 
     <lang-entry lang="xml" ext=".xml" />
+
+    <lang-entry lang="shell script" ext=".sh" />
+    <lang-entry lang="shell script" ext=".bash" />
+
+    <lang-entry lang="powershell" ext=".ps1" />
+    <lang-entry lang="batch" ext=".bat" />
 
 </ext-config>
