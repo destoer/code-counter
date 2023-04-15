@@ -25,14 +25,21 @@ public class CodeCounter
 
         foreach(string file in files)
         {
+            string ext = Path.GetExtension(file);
+
+            // dont count files that are binary or have no ext
+            if(!Lib.fileIsPlainText(file) || ext == "")
+            {
+                //Console.WriteLine("Filtered: {0}",file);
+                continue;
+            }
+
             int lines = countLines(file);
 
             // What language does this file belong to?
             // TODO: at the moment this is really simple and works on extension alone
             // and cannot resolve stuff like wether or .h file is C++ or C code
-
-            string ext = Path.GetExtension(file);
-
+            
             // Find what language this exenstion belongs to if any?
             if(extTable.ContainsKey(ext))
             {
@@ -57,7 +64,7 @@ public class CodeCounter
     // we want a pretty graph printer later
     public void printCount()
     {
-        Console.WriteLine("total lines of code: {0}\n",total);
+        Console.WriteLine("total lines: {0}\n",total);
 
         // Lines with percentage of total
         foreach(var item in langCountTable)
