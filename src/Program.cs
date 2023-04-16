@@ -20,6 +20,7 @@ class Program
 
         catch(Exception ex)
         {
+            Console.WriteLine("LOG: {0}",ex.ToString());
             Console.WriteLine("Error: {0}\n",ex.Message);
             return;
         }

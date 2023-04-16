@@ -45,6 +45,7 @@
         <file-entry lang="Makefile" name="Makefile" />
         <file-entry lang="cmake" name="CMakeLists.txt" /> 
         <file-entry lang="gitignore" name=".gitignore" />
+        <file-entry lang="license" name="LICENSE" />
     </lang-file>
 </config>
 

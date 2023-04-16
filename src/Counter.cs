@@ -4,6 +4,9 @@ using System.IO;
 using System.Xml.Linq;
 using System.Linq;
 
+using System.Diagnostics;
+
+using System.Text.RegularExpressions;
 
 public class CodeCounter
 {
@@ -12,19 +15,89 @@ public class CodeCounter
         // Read in all files in chosen dir
         try
         {
-            // TODO: we need a more in depth method to ignore hidden files and the gitignore
+            // TODO: we need to do a by hand traversal so we can filter hidden dirs...
+            List<string> fileList = Directory.EnumerateFiles(dirName,"*",SearchOption.AllDirectories).ToList();
 
-            files = Directory.EnumerateFiles(dirName,"*",SearchOption.AllDirectories).ToArray();
+            // filter by a gitignore if present            
+            filterGitignore(fileList,dirName);
+
+            // files have been filtered out now they are ready for work
+            files = fileList.ToArray();
         }
 
-        catch
+        catch(Exception ex)
         {
+            Console.WriteLine("LOG: {0}",ex.ToString());
             throw new Exception(string.Format("Could not parse dir {0}",dirName));   
         }
 
         // we need to know how files are going to filtered out first!
         loadConfig();
 
+        // actually perfrom the counting
+        countLang();
+    }
+
+
+    void filterGitignore(List<string> fileList, string dirName)
+    {
+        string ignore = ignore = dirName + "/" + ".gitignore";
+
+        // filter by gitignore if it exists
+        if(File.Exists(ignore))
+        {
+            List<string> filters = File.ReadLines(ignore).ToList();
+
+            for(int i = fileList.Count - 1; i >= 0; i--)
+            {
+                string file = fileList[i];
+
+                foreach(string filter in filters)
+                {
+                    // ignore comments in the gitignore
+                    if(string.IsNullOrWhiteSpace(filter) || filter.StartsWith("#"))
+                    {
+                        continue;
+                    }
+
+
+                    bool filtered = false;
+
+                    // convert 'shell' style wildcard filters to regex
+                    string reg_filter = Regex.Escape(filter).Replace("\\*",".*");
+
+                    // filter is by dir
+                    if(reg_filter.Contains("/"))
+                    {
+                        // need to apply this relative to the selected dir so filtering is not done
+                        // on paths outside the workspace!
+                        string relFile = file.Replace(dirName,"");
+
+                        // this filteres at any point in the directory tree
+                        filtered = Regex.IsMatch(relFile,".*" + reg_filter);
+                    }
+
+                    // filter is by file
+                    else
+                    {
+                        string name = Path.GetFileName(file);
+                        filtered = Regex.IsMatch(name,reg_filter);
+                    }
+
+                    if(filtered)
+                    {
+                        //Console.WriteLine("Filtered '{0}' : '{1}'\n",file,filter);
+                        fileList.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+
+        }
+    }
+
+    void countLang()
+    {
         foreach(string file in files)
         {
             string name = Path.GetFileName(file);
@@ -43,28 +116,31 @@ public class CodeCounter
             // TODO: at the moment this is really simple and works on name extension alone
             // and cannot resolve stuff like wether or .h file is C++ or C code
             
+            string lang = "";
+
             // attempt to match by file name
             if(fileTable.ContainsKey(name))
             {
-                string lang = fileTable[name];
-
-                langCountTable[lang] += lines;
-
-                // accumulate total
-                total += lines;
+                lang = fileTable[name];
             }
-
 
             // Find what language this exenstion belongs to if any?
             else if(extTable.ContainsKey(ext))
             {
                 // accumulate on lang
-                string lang = extTable[ext];
+                lang = extTable[ext];
+            }
 
+            // accumulate the count
+            if(lang != "")
+            {
                 langCountTable[lang] += lines;
 
                 // accumulate total
                 total += lines;
+
+                // extra match
+                match += 1;
             }
 
             // unknown kind of file
@@ -79,7 +155,7 @@ public class CodeCounter
     // we want a pretty graph printer later
     public void printCount()
     {
-        Console.WriteLine("total lines: {0}\n",total);
+        Console.WriteLine("total lines: {0} in {1} files\n",total,match);
 
         // Lines with percentage of total
         foreach(var item in langCountTable)
@@ -168,6 +244,8 @@ public class CodeCounter
 
     // number of lines not picked up by filtering
     int other = 0;
+    
+    int match = 0;
 
     // language filtering
     Dictionary<string,string> extTable = new Dictionary<string,string>();
