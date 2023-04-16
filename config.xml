@@ -25,6 +25,8 @@
 
         <lang-entry lang="java" ext=".java" />
 
+        <lang-entry lang="go" ext=".go" />
+
         <lang-entry lang="javascript" ext=".js" />
         <lang-entry lang="php" ext=".php" />
         <lang-entry lang="html" ext=".html" />
