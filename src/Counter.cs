@@ -12,11 +12,40 @@ public class CodeCounter
 {
     public CodeCounter(string dirName)
     {
-        // Read in all files in chosen dir
+        
         try
         {
-            // TODO: we need to do a by hand traversal so we can filter hidden dirs...
-            List<string> fileList = Directory.EnumerateFiles(dirName,"*",SearchOption.AllDirectories).ToList();
+            // Read in all files in chosen dir
+            // while ignoring those that are hidden, or in a hidden dir!
+            Stack<string> dirStack = new Stack<string>();
+            List<string> fileList = new List<string>();
+
+            // add root for intial search
+            dirStack.Push(dirName);
+
+            while(dirStack.Count != 0)
+            {
+                string curDir = dirStack.Pop();
+
+                // add dirs that aernt hidden for searching
+                var dirs = 
+                    from file in Directory.GetDirectories(curDir)
+                    where !File.GetAttributes(file).HasFlag(FileAttributes.Hidden)
+                    select file;
+
+                foreach(string dir in dirs)
+                {
+                    dirStack.Push(dir);
+                }
+
+                // add non hidden files to final list
+                var normalFiles =
+                    from file in Directory.GetFiles(curDir)
+                    where !File.GetAttributes(file).HasFlag(FileAttributes.Hidden)
+                    select file;
+
+                fileList.AddRange(normalFiles);
+            }
 
             // filter by a gitignore if present            
             filterGitignore(fileList,dirName);
