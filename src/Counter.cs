@@ -222,10 +222,11 @@ public class CodeCounter
 
         XElement root = xDoc.Element("config") ?? throw new Exception("Could not find root onfig");
 
-        // Pull extenstion settings   
+        
         XElement? extConfig = root.Element("lang-ext");
         XElement? fileConfig = root.Element("lang-file");
 
+        // pull extenstion settings
         if(extConfig != null)
         {
             // for each ext config rip the extenstion and lang
@@ -241,7 +242,7 @@ public class CodeCounter
             }
         }
 
-
+        // pull file settings
         if(fileConfig != null)
         {
             // for each file config rip filename and lang
