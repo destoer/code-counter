@@ -1,44 +1,51 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ext-config>
+<config>
+    <lang-ext>
+        <lang-entry lang="C++" ext=".cpp" />
+        <lang-entry lang="C++" ext=".cc" />
+        <lang-entry lang="C++" ext=".inl" />
+        <lang-entry lang="C++" ext=".hpp" />
 
-    <lang-entry lang="C++" ext=".cpp" />
-    <lang-entry lang="C++" ext=".cc" />
-    <lang-entry lang="C++" ext=".inl" />
-    <lang-entry lang="C++" ext=".hpp" />
+        <lang-entry lang="C" ext=".c" />
+        <lang-entry lang="C" ext=".h" />
 
-    <lang-entry lang="C" ext=".c" />
-    <lang-entry lang="C" ext=".h" />
+        <lang-entry lang="assembly" ext=".s" />
+        <lang-entry lang="assembly" ext=".S" />
 
-    <lang-entry lang="assembly" ext=".s" />
-    <lang-entry lang="assembly" ext=".S" />
+        <lang-entry lang="sourcepawn" ext=".sp" />
+        <lang-entry lang="generic include" ext=".inc" />
 
-    <lang-entry lang="sourcepawn" ext=".sp" />
-    <lang-entry lang="generic include" ext=".inc" />
+        <lang-entry lang="python" ext=".py" />
 
-    <lang-entry lang="python" ext=".py" />
+        <lang-entry lang="rust" ext=".rs" />
 
-    <lang-entry lang="rust" ext=".rs" />
+        <lang-entry lang="C#" ext=".cs" />
 
-    <lang-entry lang="C#" ext=".cs" />
+        <lang-entry lang="interloper" ext=".itl" />
 
-    <lang-entry lang="interloper" ext=".itl" />
+        <lang-entry lang="java" ext=".java" />
 
-    <lang-entry lang="java" ext=".java" />
+        <lang-entry lang="javascript" ext=".js" />
+        <lang-entry lang="php" ext=".php" />
+        <lang-entry lang="html" ext=".html" />
 
-    <lang-entry lang="javascript" ext=".js" />
-    <lang-entry lang="php" ext=".php" />
-    <lang-entry lang="html" ext=".html" />
+        <lang-entry lang="markdown" ext=".md" />
+        <lang-entry lang="text file" ext=".txt" />
 
-    <lang-entry lang="markdown" ext=".md" />
+        <lang-entry lang="xml" ext=".xml" />
 
-    <lang-entry lang="text file" ext=".txt" />
+        <lang-entry lang="shell script" ext=".sh" />
+        <lang-entry lang="shell script" ext=".bash" />
 
-    <lang-entry lang="xml" ext=".xml" />
+        <lang-entry lang="powershell" ext=".ps1" />
+        <lang-entry lang="batch" ext=".bat" />
+    </lang-ext>
 
-    <lang-entry lang="shell script" ext=".sh" />
-    <lang-entry lang="shell script" ext=".bash" />
+    <lang-file>
+        <file-entry lang="Makefile" name="Makefile" />
+        <file-entry lang="cmake" name="CMakeLists.txt" /> 
+        <file-entry lang="gitignore" name=".gitignore" />
+    </lang-file>
+</config>
 
-    <lang-entry lang="powershell" ext=".ps1" />
-    <lang-entry lang="batch" ext=".bat" />
 
-</ext-config>

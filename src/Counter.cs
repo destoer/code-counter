@@ -12,6 +12,8 @@ public class CodeCounter
         // Read in all files in chosen dir
         try
         {
+            // TODO: we need a more in depth method to ignore hidden files and the gitignore
+
             files = Directory.EnumerateFiles(dirName,"*",SearchOption.AllDirectories).ToArray();
         }
 
@@ -25,7 +27,8 @@ public class CodeCounter
 
         foreach(string file in files)
         {
-            string ext = Path.GetExtension(file);
+            string name = Path.GetFileName(file);
+            string ext = Path.GetExtension(name);
 
             // dont count files that are binary or have no ext
             if(!Lib.fileIsPlainText(file) || ext == "")
@@ -37,11 +40,23 @@ public class CodeCounter
             int lines = countLines(file);
 
             // What language does this file belong to?
-            // TODO: at the moment this is really simple and works on extension alone
+            // TODO: at the moment this is really simple and works on name extension alone
             // and cannot resolve stuff like wether or .h file is C++ or C code
             
+            // attempt to match by file name
+            if(fileTable.ContainsKey(name))
+            {
+                string lang = fileTable[name];
+
+                langCountTable[lang] += lines;
+
+                // accumulate total
+                total += lines;
+            }
+
+
             // Find what language this exenstion belongs to if any?
-            if(extTable.ContainsKey(ext))
+            else if(extTable.ContainsKey(ext))
             {
                 // accumulate on lang
                 string lang = extTable[ext];
@@ -52,10 +67,10 @@ public class CodeCounter
                 total += lines;
             }
 
+            // unknown kind of file
             else
             {
-                // do the default
-                other += lines;
+                other += lines; 
             }
         }
     }
@@ -94,26 +109,50 @@ public class CodeCounter
             xDoc = XDocument.Load("config.xml");
         }
 
-        catch
+        catch(Exception ex)
         {
-            throw new Exception("Could not parse configuration file config.xml");
+            Console.WriteLine("Log: {0}",ex.Message);
+            throw new Exception("Could not load configuration file config.xml");
         }
+
+        XElement root = xDoc.Element("config") ?? throw new Exception("Could not find root onfig");
 
         // Pull extenstion settings   
-        XElement extConfig = xDoc.Element("ext-config") ??  throw new Exception("Could not parse configuration file config.xml");
+        XElement? extConfig = root.Element("lang-ext");
+        XElement? fileConfig = root.Element("lang-file");
 
-
-        // for each ext-config rip the extenstion and lang
-        foreach(XElement xe in extConfig.Elements())
+        if(extConfig != null)
         {
-            ArgumentNullException.ThrowIfNull(xe,"Could not parse configuration file config.xml");
+            // for each ext config rip the extenstion and lang
+            foreach(XElement xe in extConfig.Elements())
+            {
+                ArgumentNullException.ThrowIfNull(xe,"Could not parse extenstion entry");
 
-            string ext = xe.Attribute("ext")?.Value ?? throw new Exception("Could not parse configuration file config.xml");
-            string lang = xe.Attribute("lang")?.Value ?? throw new Exception("Could not parse configuration file config.xml");
+                string ext = xe.Attribute("ext")?.Value ?? throw new Exception("Could not parse exenstion entry (ext)");
+                string lang = xe.Attribute("lang")?.Value ?? throw new Exception("Could not parse exenstion entry (lang)");
 
-            extTable[ext] = lang;
-            langCountTable[lang] = 0;
+                extTable[ext] = lang;
+                langCountTable[lang] = 0;
+            }
         }
+
+
+        if(fileConfig != null)
+        {
+            // for each file config rip filename and lang
+            foreach(XElement xe in fileConfig.Elements())
+            {
+                ArgumentNullException.ThrowIfNull(xe,"Could not parse extenstion entry");
+
+                string file = xe.Attribute("name")?.Value ?? throw new Exception("Could not parse file entry (name)");
+                string lang = xe.Attribute("lang")?.Value ?? throw new Exception("Could not parse file entry (lang)");
+
+                fileTable[file] = lang;
+                langCountTable[lang] = 0;                
+            }
+
+        }
+
     }
 
     int countLines(string file)
@@ -132,6 +171,8 @@ public class CodeCounter
 
     // language filtering
     Dictionary<string,string> extTable = new Dictionary<string,string>();
+    Dictionary<string,string> fileTable = new Dictionary<string,string>();
+
     Dictionary<string,int> langCountTable = new Dictionary<string,int>();
 
 }
